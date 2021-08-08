@@ -12,12 +12,6 @@
     <br> 
 </p>
 
-## 📝 Table of Contents
-
-- [About](#about)
-- [Getting Started](#getting_started)
-- [Built Using](#built_using)
-
 ## 🧐 About <a name = "about"></a>
 
 This is the result of me learning how best to visualise data, a key skill for any data scientist; telling a story. The arguably most contemporary and useful live dataset right now is COVID statistics, sourced from the NHS' own api. 
