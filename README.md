@@ -14,7 +14,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-This is the result of me learning how best to visualise data, a key skill for any data scientist; telling a story. The arguably most contemporary and useful live dataset right now is COVID statistics, sourced from the NHS' own api. 
+This is the result of me learning how best to visualise data, a key skill for any data scientist; telling a story. The arguably most contemporary and useful live data right now are the COVID statistics, sourced from the NHS' own api. 
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -22,7 +22,7 @@ A simple
 ```
 export FLASK_APP=app.py && flask run
 ```
-is all you need to get this project running, follow the URL outputted in the terminal to find access the local web server.
+is all you need to get this project running, follow the URL outputted in the terminal to access the local web server.
 
 ### Prerequisites
 
