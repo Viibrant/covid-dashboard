@@ -36,7 +36,7 @@ class covid:
 
         return {"dates": dates, "cases": new_cases}
 
-    def generate_cases_graph(self):
+    def cases_graph(self):
         source = ColumnDataSource(data=self.get_cases())
         p = figure(
             title="New Covid Cases as of %s" % (date.today()),
@@ -73,6 +73,8 @@ class covid:
         p.yaxis.axis_label = "New Cases"
 
         p.line(x="dates", y="cases", source=source, color='red')
+
+        return p
 
 
 
