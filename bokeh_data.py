@@ -24,7 +24,6 @@ class covid:
                 if retries == 5:
                     raise e
 
-
     def get_cases(self):
         # Parse JSON to get dates vs cases dictionary
         dates = []
@@ -37,6 +36,7 @@ class covid:
         return {"dates": dates, "cases": new_cases}
 
     def cases_graph(self):
+        # Generate graph for New Cases vs Date
         source = ColumnDataSource(data=self.get_cases())
         p = figure(
             title="New Covid Cases as of %s" % (date.today()),
@@ -59,7 +59,6 @@ class covid:
         p.add_tools(zoom_tool, hover_tool)
         p.toolbar.active_scroll = p.select_one(WheelZoomTool)
 
-
         date_format = "%d %b %Y"
         p.xaxis.formatter = DatetimeTickFormatter(
             hours=date_format,
@@ -71,9 +70,6 @@ class covid:
 
         p.yaxis.formatter = NumeralTickFormatter(format="0,0")
         p.yaxis.axis_label = "New Cases"
-
         p.line(x="dates", y="cases", source=source, color='red')
 
         return p
-
-
