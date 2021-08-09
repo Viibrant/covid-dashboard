@@ -14,7 +14,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-This web app is a simple dashboard that presents real time NHS COVID-19 data in an easy to understand form. The data is retrieved from the NHS Coronavirus API.
+This web app is a dashboard that presents real time NHS COVID-19 data in an easy to understand form. The data is retrieved from the NHS Coronavirus API.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
