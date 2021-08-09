@@ -14,7 +14,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-This is the result of me learning how best to visualise data, a key skill for any data scientist; telling a story. The arguably most contemporary and useful live data right now are the COVID-19 statistics, sourced from the NHS' own api. 
+This is the result of me learning how best to visualise data, a key skill for any data scientist; telling a story. The most contemporary and useful live data right now are the COVID-19 statistics, sourced from the NHS' own api. 
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
