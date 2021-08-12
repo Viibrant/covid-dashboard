@@ -50,8 +50,8 @@ def bokeh():
 if __name__ == "__main__":
     endpoint = (
         'https://api.coronavirus.data.gov.uk/v1/data?'
-        'filters=areaType=nation;areaName=england&'
-        'structure={"date":"date","newCases":"newCasesByPublishDate"}'
+        'filters=areaType=utla&'
+        'structure={"area": "areaName", "date":"date", "newCases":"newCasesByPublishDate"}'
     )
     dataset = covid(endpoint)
     app.run(debug=True)

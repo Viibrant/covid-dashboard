@@ -1,21 +1,48 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from requests import get
 from bokeh.plotting import figure, show
 from bokeh.models import DataRange1d, WheelZoomTool, HoverTool, DatetimeTickFormatter, NumeralTickFormatter, ColumnDataSource
 from bokeh.io import curdoc
+from os.path import isfile
 import time
+import json
 
 class covid:
-    
+
     def __init__(self, endpoint):
-        success = False
+        # Check if file doesn't exist
+        file_exists = isfile("statistics.json")
         retries = 0
-        # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
-        while not success:
+
+        if file_exists:
+            with open("statistics.json") as json_file:
+                data = json.load(json_file)
+
+                # Read latest date from statistics.json and convert to Date object
+                latest_date = datetime.strptime(data[0]['date'], "%Y-%m-%d").date()
+                current_date = date.today()
+                print(latest_date + timedelta(days=1))
+
+                # Data is always retrieved a day behind
+                #   therefore if statistics.json is up to date then
+                #       latest_date + 1 day == current_date
+                if current_date == latest_date + timedelta(days=1):
+                    latest = True
+                    self.statistics = data
+                else:
+                    latest = False
+
+        while not latest or not file_exists:
+            # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
             try:
                 response = get(endpoint, timeout=10)
-                self.api_response = response.json()
-                success = True
+                api_response = response.json()["data"]
+
+                with open("statistics.json", 'w') as json_file:
+                    json.dump(api_response, json_file)
+                self.statistics = api_response
+                file_exists = True
+
             except Exception as e:
                 wait = retries * 2;
                 print('Error! Waiting %s secs and re-trying...'%wait)
@@ -24,20 +51,24 @@ class covid:
                 if retries == 5:
                     raise e
 
-    def get_cases(self):
+    def get_cases_nationally(self):
         # Parse JSON to get dates vs cases dictionary
         dates = []
         new_cases = []
-        for dictionary in self.api_response['data']:
-            values = list(dictionary.values())
-            dates.append(datetime.strptime(values[0], "%Y-%m-%d"))
-            new_cases.append(values[1])
+        for record in self.statistics:
+            record_cases = record["newCases"]
+            record_date = datetime.strptime(record["date"], "%Y-%m-%d")
+            if record_date in dates:
+                new_cases[dates.index(record_date)] += record_cases
+            else:
+                dates.append(record_date)
+                new_cases.append(record_cases)
 
         return {"dates": dates, "cases": new_cases}
 
     def cases_graph(self):
         # Generate graph for New Cases vs Date
-        source = ColumnDataSource(data=self.get_cases())
+        source = ColumnDataSource(data=self.get_cases_nationally())
         p = figure(
             title="New Covid Cases as of %s" % (date.today()),
             tools="pan, reset",
