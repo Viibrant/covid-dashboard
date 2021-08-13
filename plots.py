@@ -4,6 +4,7 @@ from bokeh.plotting import figure, show
 from bokeh.models import DataRange1d, WheelZoomTool, HoverTool, DatetimeTickFormatter, NumeralTickFormatter, ColumnDataSource
 from bokeh.io import curdoc
 from os.path import isfile
+import pandas as pd
 import time
 import json
 
@@ -18,7 +19,7 @@ class covid:
         if file_exists:
             with open("statistics.json") as json_file:
                 data = json.load(json_file)
-
+                
                 # Read latest date from statistics.json and convert to Date object
                 latest_date = datetime.strptime(data[0]['date'], "%Y-%m-%d").date()
 
@@ -27,7 +28,7 @@ class covid:
                 #       current_date == latest_date + 1 day 
                 if date.today() == latest_date + timedelta(days=2):
                     latest = True
-                    self.statistics = data
+                    self.statistics = pd.DataFrame(data)
                 else:
                     latest = False
 
@@ -36,11 +37,11 @@ class covid:
             # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
             try:
                 response = get(endpoint, allow_redirects=True, timeout=10)
-                self.statistics = json.loads(response.text)['body']
+                data = json.loads(response.text)['body']
                 with open("statistics.json", "w") as json_file:
-                    json.dump(self.statistics, json_file)
-                
-                print("foo")
+                    json.dump(data, json_file)
+     
+                self.statistics = pd.DataFrame(data)
                 file_exists = True
                 latest = True
 
@@ -51,21 +52,14 @@ class covid:
                 retries += 1
                 if retries == 5:
                     raise e
+        
+        self.statistics['date'] = pd.to_datetime(self.statistics['date'])
 
     def get_cases_nationally(self):
-        # Parse JSON to get dates vs cases dictionary
-        dates = []
-        new_cases = []
-        for record in self.statistics:
-            record_cases = record["newCasesBySpecimenDate"]
-            record_date = datetime.strptime(record["date"], "%Y-%m-%d")
-            if record_date in dates:
-                new_cases[dates.index(record_date)] += record_cases
-            else:
-                dates.append(record_date)
-                new_cases.append(record_cases)
+        grouped_dates = self.statistics.groupby("date").newCasesBySpecimenDate
+        aggregated = pd.concat([grouped_dates.apply(sum), grouped_dates.count()], axis=1, keys=["date"])
 
-        return {"dates": dates, "cases": new_cases}
+        return {"dates": list(aggregated.index), "cases": aggregated["date"].to_list()}
 
     def cases_graph(self):
         # Generate graph for New Cases vs Date
@@ -105,4 +99,3 @@ class covid:
         p.line(x="dates", y="cases", source=source, color='red')
 
         return p
-
