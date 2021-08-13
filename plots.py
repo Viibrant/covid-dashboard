@@ -13,6 +13,7 @@ class covid:
         # Check if file doesn't exist
         file_exists = isfile("statistics.json")
         retries = 0
+        latest = True
 
         if file_exists:
             with open("statistics.json") as json_file:
@@ -20,28 +21,28 @@ class covid:
 
                 # Read latest date from statistics.json and convert to Date object
                 latest_date = datetime.strptime(data[0]['date'], "%Y-%m-%d").date()
-                current_date = date.today()
-                print(latest_date + timedelta(days=1))
 
                 # Data is always retrieved a day behind
                 #   therefore if statistics.json is up to date then
-                #       latest_date + 1 day == current_date
-                if current_date == latest_date + timedelta(days=1):
+                #       current_date == latest_date + 1 day 
+                if date.today() == latest_date + timedelta(days=2):
                     latest = True
                     self.statistics = data
                 else:
                     latest = False
 
         while not latest or not file_exists:
+            print("File exists:%s\nLatest version:%s"%(file_exists, latest))
             # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
             try:
-                response = get(endpoint, timeout=10)
-                api_response = response.json()["data"]
-
-                with open("statistics.json", 'w') as json_file:
-                    json.dump(api_response, json_file)
-                self.statistics = api_response
+                response = get(endpoint, allow_redirects=True, timeout=10)
+                self.statistics = json.loads(response.text)['body']
+                with open("statistics.json", "w") as json_file:
+                    json.dump(self.statistics, json_file)
+                
+                print("foo")
                 file_exists = True
+                latest = True
 
             except Exception as e:
                 wait = retries * 2;
@@ -56,7 +57,7 @@ class covid:
         dates = []
         new_cases = []
         for record in self.statistics:
-            record_cases = record["newCases"]
+            record_cases = record["newCasesBySpecimenDate"]
             record_date = datetime.strptime(record["date"], "%Y-%m-%d")
             if record_date in dates:
                 new_cases[dates.index(record_date)] += record_cases
@@ -104,3 +105,4 @@ class covid:
         p.line(x="dates", y="cases", source=source, color='red')
 
         return p
+
