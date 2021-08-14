@@ -31,7 +31,7 @@ def temp():
 def bokeh():
     global dataset
     fig1 = dataset.cases_graph()
-    fig2 = dataset.cases_graph()
+    fig2 = dataset.vaccines_graph()
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
