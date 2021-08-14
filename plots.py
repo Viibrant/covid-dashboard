@@ -28,7 +28,7 @@ class covid:
                 # Data is always retrieved a day behind
                 #   therefore if statistics.json is up to date then
                 #       current_date == latest_date + 1 day
-                if date.today() == latest_date + timedelta(days=2):
+                if date.today() == latest_date + timedelta(days=1):
                     latest = True
                     # Convert dictionary to a Pandas DataFrame, far more efficient
                     self.statistics = pd.DataFrame(data)
@@ -54,7 +54,7 @@ class covid:
                 time.sleep(wait)
                 retries += 1
                 if retries == 5:
-                    raise e
+                    raise e 
 
         # Convert all data in date column to datetimes for easier usage
         self.statistics['date'] = pd.to_datetime(self.statistics['date'])
@@ -86,8 +86,8 @@ class covid:
         hover_tool = HoverTool()
         hover_tool.mode = "vline"
         hover_tool.tooltips = [
-            ("Selected Date", "$x{%d %b %Y}"), ("New Cases", "@cases{0,0}")]
-        hover_tool.formatters = {"$x": "datetime", "@cases": "numeral"}
+            ("Selected Date", "@dates{%d %b %Y}"), ("New Cases", "@cases{0,0}")]
+        hover_tool.formatters = {"@dates": "datetime", "@cases": "numeral"}
 
         p.add_tools(zoom_tool, hover_tool)
         p.toolbar.active_scroll = p.select_one(WheelZoomTool)

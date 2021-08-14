@@ -48,6 +48,7 @@ def bokeh():
     return html
 
 if __name__ == "__main__":
-    endpoint = "https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric=newCasesBySpecimenDate&format=json"
+    metrics = ["newCasesBySpecimenDate", "cumPeopleVaccinatedCompleteByVaccinationDate"]
+    endpoint = "https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json".format(metrics="&".join(metrics))
     dataset = covid(endpoint)
     app.run(debug=True)
