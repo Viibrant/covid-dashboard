@@ -1,14 +1,12 @@
+import time
+import json
+import pandas as pd
 from datetime import date, datetime, timedelta
 from requests import get
 from bokeh.plotting import figure, show
 from bokeh.models import DataRange1d, WheelZoomTool, HoverTool, DatetimeTickFormatter, NumeralTickFormatter, ColumnDataSource
 from bokeh.io import curdoc
 from os.path import isfile
-import pandas as pd
-import time
-import json
-
-
 class covid:
 
     def __init__(self, endpoint):
