@@ -5,8 +5,7 @@ from datetime import date, datetime, timedelta
 from requests import get
 from bokeh.plotting import figure, show
 from bokeh.models import DataRange1d, WheelZoomTool, HoverTool, DatetimeTickFormatter, NumeralTickFormatter, ColumnDataSource
-from bokeh.io import curdoc
-from os.path import isfile
+from os.path import isfile, getctime
 class covid:
 
     def __init__(self, endpoint):
@@ -23,14 +22,24 @@ class covid:
                 latest_date = datetime.strptime(
                     data[0]['date'], "%Y-%m-%d").date()
 
+                # Get exact creation time then parse only date
+                creation_date = getctime("statistics.json")
+                creation_date = datetime.fromtimestamp(creation_date).date()
                 # Data is always retrieved a day behind
                 #   therefore if statistics.json is up to date then
                 #       current_date == latest_date + 1 day
                 if date.today() == latest_date + timedelta(days=1):
+                    print("**** Dataset is up to date")
                     latest = True
                     # Convert dictionary to a Pandas DataFrame, far more efficient
                     self.statistics = pd.DataFrame(data)
+                # Otherwise dataset itself may be outdated but retrieved today
+                elif date.today() == creation_date:
+                    print("**** Created today but outdated data")
+                    latest = True
+                    self.statistics = pd.DataFrame(data)
                 else:
+                    print("**** Dataset is outdated, downloading...")
                     latest = False
 
         while not latest or not file_exists:
