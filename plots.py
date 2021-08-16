@@ -65,6 +65,7 @@ class covid:
 
         # Convert all data in date column to datetimes for easier usage
         self.statistics['date'] = pd.to_datetime(self.statistics['date'])
+        self.latest_date = self.statistics.iloc[0]['date'].strftime("%d %b %Y")
 
     def get_newcases_nationally(self):
         # group all records with same dates together, then create a new dataframe and apply sum to all other columns
@@ -85,7 +86,7 @@ class covid:
         # Generate graph for New Cases vs Date
         source = ColumnDataSource(data=self.get_newcases_nationally())
         p = figure(
-            title="New Covid Cases as of %s" % (date.today() - timedelta(days=1)),
+            title="New Covid Cases as of %s" % self.latest_date,
             tools="pan, reset",
             sizing_mode="stretch_width",
             plot_height=500,
@@ -124,7 +125,7 @@ class covid:
     def vaccines_graph(self):
         source = ColumnDataSource(data=self.get_newvaccinations_nationally())
         p = figure(
-            title="People fully vaccinated as of %s" % (date.today() - timedelta(days=1)),
+            title="People fully vaccinated as of %s" % self.latest_date,
             tools="pan, reset",
             sizing_mode="stretch_width",
             plot_height=500,
