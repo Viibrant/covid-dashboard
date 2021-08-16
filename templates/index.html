@@ -4,30 +4,27 @@
   {{ css_resources|indent(4)|safe }}
   {{ plot_script|indent(4)|safe }}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-  <script type="text/javascript" charset="utf-8">
-      var socket = io();
-      socket.on('connect', function() {
-          socket.emit('my event', {data: 'I\'m connected!'});
-      });
-  </script>
+  <script type="text/javascript"
+          src="{{ url_for('static', filename='index.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
   
   <head>
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" href="index.css">
-    <title>NHS New Cases per Day</title>
+    <title>UK Coronavirus Statistics</title>
   </head>
 
   <body>
-    <div id="total">
-      {{plot_div.count}}
+    <div class="Title-area">
+      <p> Foooo </p>
     </div>
 
-    <div id="cases_graph">
-      {{plot_div.fig1|indent(4)|safe }}
+    <div class="Main-Content">
+      <p> main content
     </div>
-    <div id="vaccines_graph">
-      {{plot_div.fig2|indent(4)|safe }}
+
+    <div id="Cases">
+      {{plot_div.graphs|indent(4)|safe }}
     </div>
   </body>
 

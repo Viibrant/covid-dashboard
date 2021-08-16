@@ -88,7 +88,7 @@ class covid:
         p = figure(
             title="New Covid Cases as of %s" % self.latest_date,
             tools="pan, reset",
-            sizing_mode="stretch_width",
+            sizing_mode="stretch_both",
             plot_height=500,
             x_axis_type="datetime",
             x_range=DataRange1d(bounds="auto"),
@@ -127,7 +127,8 @@ class covid:
         p = figure(
             title="People fully vaccinated as of %s" % self.latest_date,
             tools="pan, reset",
-            sizing_mode="stretch_width",
+            toolbar_location="left",
+            sizing_mode="stretch_both",
             plot_height=500,
             x_axis_type="datetime",
             x_range=DataRange1d(bounds="auto"),
