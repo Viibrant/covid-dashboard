@@ -20,15 +20,14 @@ def loaded():
 @app.route('/')
 def index():
     global dataset
-    fig1 = dataset.cases_graph()
-    fig2 = dataset.vaccines_graph()
-    figures = row(fig1, fig2)
+    cases = dataset.cases_graph()
+    vaccines = dataset.vaccines_graph()
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
 
     # render template
-    script, div = components({"graphs":figures})
+    script, div = components({"cases": cases, "vaccines": vaccines})
     html = render_template(
         'index.html',
         plot_script=script,

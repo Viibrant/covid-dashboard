@@ -15,17 +15,19 @@
   </head>
 
   <body>
-    <div class="Title-area">
-      <p> Foooo </p>
+    <div class="header">
     </div>
 
-    <div class="Main-Content">
-      <p> main content
+    <div class="main">
     </div>
 
-    <div id="Cases">
-      {{plot_div.graphs|indent(4)|safe }}
+    <div class="footer">
+      <div class="cases"> 
+        {{plot_div.cases|indent(4)|safe }}
+      </div>
+      <div class="vaccines">
+        {{plot_div.vaccines|indent(4)|safe }}
+      </div>
     </div>
   </body>
-
 </html>
