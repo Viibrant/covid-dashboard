@@ -34,13 +34,14 @@ class covid:
                     # Convert dictionary to a Pandas DataFrame, far more efficient
                     self.statistics = pd.DataFrame(data)
                 # Otherwise dataset itself may be outdated but retrieved today
-                elif date.today() == creation_date:
-                    print("**** Created today but outdated data")
-                    latest = True
-                    self.statistics = pd.DataFrame(data)
                 else:
-                    print("**** Dataset is outdated, downloading...")
-                    latest = False
+                    if date.today() == creation_date:
+                        print("**** Created today but outdated data")
+                        latest = True
+                        self.statistics = pd.DataFrame(data)
+                    else:
+                        print("**** Dataset is outdated, downloading...")
+                        latest = False
 
         while not latest or not file_exists:
             print("File exists:%s\nLatest version:%s" % (file_exists, latest))
@@ -88,6 +89,7 @@ class covid:
         p = figure(
             title="New Covid Cases as of %s" % self.latest_date,
             tools="pan, reset",
+            toolbar_location=None,
             sizing_mode="stretch_both",
             plot_height=500,
             x_axis_type="datetime",
@@ -127,7 +129,7 @@ class covid:
         p = figure(
             title="People fully vaccinated as of %s" % self.latest_date,
             tools="pan, reset",
-            toolbar_location="left",
+            toolbar_location=None,
             sizing_mode="stretch_both",
             plot_height=500,
             x_axis_type="datetime",
