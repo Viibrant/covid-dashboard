@@ -11,9 +11,8 @@ class covid:
 
     def __init__(self, endpoint):
         self.statistics = get_dataset(endpoint)
-
-        # Convert all data in date column to datetimes for easier usage
         self.statistics['date'] = pd.to_datetime(self.statistics['date'])
+        # convert all dates to standard format
         self.latest_date = self.statistics.iloc[0]['date'].strftime("%d %b %Y")
 
     def get_newcases_nationally(self):
