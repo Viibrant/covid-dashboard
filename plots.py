@@ -1,11 +1,6 @@
-from datetime import date, datetime, timedelta
-from requests import get
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 from bokeh.models import DataRange1d, WheelZoomTool, HoverTool, DatetimeTickFormatter, NumeralTickFormatter, ColumnDataSource
-from os.path import isfile, getctime
 from check_file import get_dataset
-import time
-import json
 import pandas as pd
 class covid:
 
