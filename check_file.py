@@ -7,7 +7,7 @@ import pandas as pd
 
 def get_dataset(endpoint):
     file_exists = isfile("statistics.json")
-    retries = 0
+    retries = 1
     latest = True
 
     if file_exists:
