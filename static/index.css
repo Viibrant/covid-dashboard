@@ -22,12 +22,12 @@
   width: 100%;
 }
 
-.cases {
+.cases_map {
   float: left;
   width: 50%;
 }
 
-.vaccines {
+.vaccines_map {
   overflow: hidden;
   margin-left: 50%;
 } 
