@@ -41,6 +41,6 @@ Will provide some here :))
 - [Requests](https://docs.python-requests.org/en/master/) - Python HTTP library
 - [Coronavirus API](https://coronavirus.data.gov.uk/details/developers-guide) - NHS Coronavirus API
 - [Pandas](https://pandas.pydata.org) - Python Data Analysis Library
-- [GeoPandas](https://geopandas.org) - Pandas but with Geospacial data
+- [GeoPandas](https://geopandas.org) - Pandas but with Geospatial data
 
 
