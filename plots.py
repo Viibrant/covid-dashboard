@@ -107,7 +107,7 @@ class covid:
         hover_tool = HoverTool()
         hover_tool.mode = "vline"
         hover_tool.tooltips = [
-            ("Selected Date", "@dates{%d %b %Y}"), ("Newly Vaccinated", "@cases{0,0}")]
+            ("Selected Date", "@dates{%d %b %Y}"), ("Newly Fully Vaccinated", "@cases{0,0}")]
         hover_tool.formatters = {"@dates": "datetime", "@cases": "numeral"}
 
         p.add_tools(zoom_tool, hover_tool)
@@ -123,7 +123,7 @@ class covid:
         p.xaxis.axis_label = "Date"
 
         p.yaxis.formatter = NumeralTickFormatter(format="0,0")
-        p.yaxis.axis_label = "People Vaccinated"
+        p.yaxis.axis_label = "People Fully Vaccinated"
         p.line(x="dates", y="cases", source=source, color='blue')
 
         return p
@@ -139,28 +139,78 @@ class covid:
         colour_mapper = LinearColorMapper(
             palette=palette, low=0, high=highest_cases)
         colour_bar = ColorBar(color_mapper=colour_mapper,
-                              border_line_color=None,
-                              location=(0, 0),
-                              orientation="horizontal")
+					border_line_color=None,
+					location=(0, 0),
+					orientation="horizontal")
 
         p = figure(toolbar_location='below', title="New Coronavirus Cases per Area", x_range=DataRange1d(bounds="auto"),
-                   y_range=DataRange1d(bounds="auto"), tools="pan, reset"
-                   )
+					y_range=DataRange1d(bounds="auto"), tools="pan, reset"
+				)
 
         p.xgrid.grid_line_color = None
         p.ygrid.grid_line_color = None
         p.axis.visible = False
-        county = p.patches('xs', 'ys', source=geosource,
-                           fill_color={"field": "newCasesBySpecimenDate",
-                                       "transform": colour_mapper},
-                           line_color="grey",
-                           line_width=0.25,
-                           fill_alpha=1)
+        county = p.patches('xs', 'ys', 
+						source=geosource,
+						fill_color={"field": "newCasesBySpecimenDate",
+									"transform": colour_mapper},
+						line_color="grey",
+						line_width=0.25,
+						fill_alpha=1)
 
-        p.add_tools(HoverTool(renderers=[county],
-                              tooltips=[('Area', '@areaName'),
-                                        ('New Cases', '@{column}'.format(column="newCasesBySpecimenDate"))]),
-                    WheelZoomTool(maintain_focus=False))
+        p.add_tools(
+            HoverTool(
+                renderers=[county],
+                tooltips=[
+                    ('Area', '@areaName'),
+                    ('New Cases',
+					'@{column}'.format(column="newCasesBySpecimenDate"))
+                ]),
+            WheelZoomTool(maintain_focus=False))
+        p.toolbar.active_scroll = p.select_one(WheelZoomTool)
+        p.add_layout(colour_bar, "below")
+
+        return p
+
+    def vaccines_map(self):
+        geosource = GeoJSONDataSource(
+            geojson=self.ldf.to_json(default=lambda time: time.__str__()))
+        
+        highest_cases = self.ldf.sort_values(
+            "newPeopleVaccinatedCompleteByVaccinationDate", ascending=False).iloc[0]["newPeopleVaccinatedCompleteByVaccinationDate"]
+        palette = brewer['YlOrRd'][9][::-1]
+
+        colour_mapper = LinearColorMapper(
+            palette=palette, low=0, high=highest_cases)
+        colour_bar = ColorBar(color_mapper=colour_mapper,
+					border_line_color=None,
+					location=(0, 0),
+					orientation="horizontal")
+
+        p = figure(toolbar_location='below', title="New people fully vaccinated", x_range=DataRange1d(bounds="auto"),
+					y_range=DataRange1d(bounds="auto"), tools="pan, reset"
+				)
+
+        p.xgrid.grid_line_color = None
+        p.ygrid.grid_line_color = None
+        p.axis.visible = False
+        county = p.patches('xs', 'ys', 
+						source=geosource,
+						fill_color={"field": "newPeopleVaccinatedCompleteByVaccinationDate",
+									"transform": colour_mapper},
+						line_color="grey",
+						line_width=0.25,
+						fill_alpha=1)
+
+        p.add_tools(
+            HoverTool(
+                renderers=[county],
+                tooltips=[
+                    ('Area', '@areaName'),
+                    ('New Cases',
+					'@{column}'.format(column="newPeopleVaccinatedCompleteByVaccinationDate"))
+                ]),
+            WheelZoomTool(maintain_focus=False))
         p.toolbar.active_scroll = p.select_one(WheelZoomTool)
         p.add_layout(colour_bar, "below")
 
