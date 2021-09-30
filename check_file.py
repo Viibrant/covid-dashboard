@@ -1,18 +1,26 @@
 from datetime import date, datetime, timedelta
 from requests import get
+from requests.exceptions import RequestException
 from os.path import isfile, getctime
+from os import stat
 import time
 import json
 import pandas as pd
+from tqdm import tqdm
 
 def get_dataset(endpoint):
     file_exists = isfile("statistics.json")
     retries = 1
-    latest = True
+    latest = False
+    empty = True
 
     if file_exists:
+        if stat("statistics.json").st_size != 0:
+            empty = False
+
+    if not empty:
         with open("statistics.json") as json_file:
-            data = json.load(json_file)
+            data = json.load(json_file)["body"]
 
             # Read latest date from statistics.json and convert to Date object
             latest_date = datetime.strptime(
@@ -41,13 +49,21 @@ def get_dataset(endpoint):
         print("File exists:%s\nLatest version:%s" % (file_exists, latest))
         # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
         try:
-            response = get(endpoint, allow_redirects=True, timeout=10)
-            data = json.loads(response.text)['body']
-            with open("statistics.json", "w") as json_file:
-                json.dump(data, json_file)
+            response = get(endpoint, allow_redirects=True, timeout=10, stream=True)
+            total_size = int(response.headers.get('content-length', 0))
+            block_size = 1024 #1 Kibibyte
+            progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
+            data = b""
+            with open("statistics.json", "wb") as json_file:
+                for i in response.iter_content(block_size):
+                    progress_bar.update(len(i))
+                    json_file.write(i)
+                    data += i
+                data = json.loads(data)["body"]
+
             return pd.DataFrame(data)
 
-        except Exception as e:
+        except RequestException as e:
             wait = retries * 2
             print('Error! Waiting %s secs and re-trying...' % wait)
             time.sleep(wait)
