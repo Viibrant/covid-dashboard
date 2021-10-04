@@ -8,23 +8,22 @@ import json
 import pandas as pd
 from tqdm import tqdm
 
+
 def get_dataset(endpoint):
     file_exists = isfile("statistics.json")
     retries = 1
     latest = False
     empty = True
 
-    if file_exists:
-        if stat("statistics.json").st_size != 0:
-            empty = False
+    if file_exists & stat("statistics.json").st_size != 0:
+        empty = False
 
     if not empty:
         with open("statistics.json") as json_file:
             data = json.load(json_file)["body"]
 
             # Read latest date from statistics.json and convert to Date object
-            latest_date = datetime.strptime(
-                data[0]['date'], "%Y-%m-%d").date()
+            latest_date = datetime.strptime(data[0]["date"], "%Y-%m-%d").date()
 
             # Get exact creation time then parse only date
             creation_date = getctime("statistics.json")
@@ -50,9 +49,9 @@ def get_dataset(endpoint):
         # Attempt to retrieve COVID Statistics from NHS, waiting time grows incrementally
         try:
             response = get(endpoint, allow_redirects=True, timeout=10, stream=True)
-            total_size = int(response.headers.get('content-length', 0))
-            block_size = 1024 #1 Kibibyte
-            progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
+            total_size = int(response.headers.get("content-length", 0))
+            block_size = 1024  # 1 Kibibyte
+            progress_bar = tqdm(total=total_size, unit="iB", unit_scale=True)
             data = b""
             with open("statistics.json", "wb") as json_file:
                 for i in response.iter_content(block_size):
@@ -65,8 +64,16 @@ def get_dataset(endpoint):
 
         except RequestException as e:
             wait = retries * 2
-            print('Error! Waiting %s secs and re-trying...' % wait)
+            print("Error! Waiting %s secs and re-trying..." % wait)
             time.sleep(wait)
             retries += 1
             if retries == 5:
-                raise e 
+                raise e
+
+
+if __name__ == "__main__":
+    metrics = ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
+    endpoint = "https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json".format(
+        metrics="&metric=".join(metrics)
+    )
+    get_dataset(endpoint)
