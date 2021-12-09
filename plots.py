@@ -1,7 +1,6 @@
-import plotly.express as px
 from check_file import get_dataset
+import plotly.express as px
 import pandas as pd
-import geopandas as gpd
 
 
 class covid:
