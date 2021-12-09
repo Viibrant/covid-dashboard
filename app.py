@@ -1,21 +1,15 @@
 from flask import Flask, render_template
-from flask_socketio import SocketIO, send, emit
-import pandas as pd
+from plots import plot_obj
 import json
 import plotly
-import plotly.express as px
-from plots import covid
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
-@socketio.on("loaded")
-def loaded():
-    global dataset
-    national_new_cases = dataset.get_newcases_nationally()["cases"][-1]
-    print(national_new_cases)
-    emit(national_new_cases)
+metrics = "&metric=".join(["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"])
+endpoint = f"https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json"
 
+
+dataset = plot_obj(endpoint)
 
 @app.route("/")
 def index():
@@ -25,9 +19,4 @@ def index():
 
 
 if __name__ == "__main__":
-    metrics = ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
-    endpoint = "https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json".format(
-        metrics="&metric=".join(metrics)
-    )
-    dataset = covid(endpoint)
-    socketio.run(app, debug=True)
+    app.run(app, use_reloader=False, passthrough_errors=True)
