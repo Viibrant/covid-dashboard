@@ -1,26 +1,35 @@
-from flask import Flask, render_template
 from plots import plot_obj
+from dash import html
+import dash
 import json
 import plotly
 
-app = Flask(__name__)
+app = dash.Dash(__name__)
 
-metrics = "&metric=".join(["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"])
+metrics = "&metric=".join(
+    ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
+)
 endpoint = f"https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json"
 
 
 dataset = plot_obj(endpoint)
 
-@app.route("/")
-def index():
-    case_fig = dataset.cases_graph()
-    cases = json.dumps(case_fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-    vaccine_fig = dataset.full_vaccines_graph()
-    vaccines = json.dumps(vaccine_fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return render_template("index.html", cases=cases, vaccines=vaccines)
+app.layout = html.Div(
+    children=[
+        html.Div(
+            className="row",  # Define the row element
+            children=[
+                html.Div(
+                    className="four columns div-user-controls"
+                ),  # Define the left element
+                html.Div(
+                    className="eight columns div-for-charts bg-grey"
+                ),  # Define the right element
+            ],
+        )
+    ]
+)
 
 
 if __name__ == "__main__":
-    app.run(app, use_reloader=False, passthrough_errors=True)
+    app.run_server(debug=True)

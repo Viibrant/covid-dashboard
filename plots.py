@@ -6,10 +6,10 @@ import pandas as pd
 class plot_obj:
     def __init__(self, endpoint):
         raw_data = get_dataset(endpoint)
-        
+
         self.statistics = raw_data
         self.statistics["date"] = pd.to_datetime(self.statistics["date"])
-        
+
         self.latest_date = self.statistics.iloc[0]["date"].strftime("%Y-%m-%d")
 
     def get_newcases_nationally(self):
@@ -47,7 +47,10 @@ class plot_obj:
             self.statistics, "date", "newCasesBySpecimenDate", alt=(None, "cases")
         )
         fig = px.line(
-            df, x="date", y="cases", title="New Cases per day as of %s" % (self.latest_date)
+            df,
+            x="date",
+            y="cases",
+            title="New Cases per day as of %s" % (self.latest_date),
         )
         return fig
 

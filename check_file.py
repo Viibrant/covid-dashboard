@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 path = "data/statistics.json"
 
+
 def retrieve_data(endpoint):
     response = get(endpoint, allow_redirects=True, timeout=10, stream=True)
     total_size = int(response.headers.get("content-length", 0))
@@ -24,12 +25,15 @@ def retrieve_data(endpoint):
             progress_bar.update(len(i))
             json_file.write(i)
     logging.info("Successfully retrieved data")
+
+
 def read_file():
     logging.info("Reading data...")
     with open(path) as f:
         data = json.load(f)
     logging.info("Parsed as JSON")
     return data
+
 
 def get_dataset(endpoint):
     file_exists = isfile(path)
@@ -50,7 +54,7 @@ def get_dataset(endpoint):
             time.sleep(wait)
             retries += 1
             if retries == 5:
-                raise e        
+                raise e
     data = read_file()["body"]
     return pd.DataFrame(data)
 
