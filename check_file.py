@@ -11,32 +11,34 @@ from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
+path = "data/statistics.json"
+
 def retrieve_data(endpoint):
     response = get(endpoint, allow_redirects=True, timeout=10, stream=True)
     total_size = int(response.headers.get("content-length", 0))
     block_size = 1024  # 1 Kibibyte
     progress_bar = tqdm(total=total_size, unit="iB", unit_scale=True)
     logging.info("Attempting to retrieve data")
-    with open("statistics.json", "wb") as json_file:
+    with open(path, "wb") as json_file:
         for i in response.iter_content(block_size):
             progress_bar.update(len(i))
             json_file.write(i)
     logging.info("Successfully retrieved data")
 def read_file():
     logging.info("Reading data...")
-    with open("statistics.json") as f:
+    with open(path) as f:
         data = json.load(f)
     logging.info("Parsed as JSON")
     return data
 
 def get_dataset(endpoint):
-    file_exists = isfile("statistics.json")
-    empty = not (file_exists and stat("statistics.json").st_size != 0)
+    file_exists = isfile(path)
+    empty = not (file_exists and stat(path).st_size != 0)
     retries = 1
 
     if file_exists:
         logging.info("Existing file detected")
-        created = datetime.fromtimestamp(stat("statistics.json").st_mtime)
+        created = datetime.fromtimestamp(stat(path).st_mtime)
         old = created == date.today()
 
     if not file_exists or empty or old:
