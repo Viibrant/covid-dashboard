@@ -16,14 +16,17 @@ def retrieve_data(endpoint):
     total_size = int(response.headers.get("content-length", 0))
     block_size = 1024  # 1 Kibibyte
     progress_bar = tqdm(total=total_size, unit="iB", unit_scale=True)
+    logging.info("Attempting to retrieve data")
     with open("statistics.json", "wb") as json_file:
         for i in response.iter_content(block_size):
             progress_bar.update(len(i))
             json_file.write(i)
-
+    logging.info("Successfully retrieved data")
 def read_file():
+    logging.info("Reading data...")
     with open("statistics.json") as f:
         data = json.load(f)
+    logging.info("Parsed as JSON")
     return data
 
 def get_dataset(endpoint):
@@ -32,6 +35,7 @@ def get_dataset(endpoint):
     retries = 1
 
     if file_exists:
+        logging.info("Existing file detected")
         created = datetime.fromtimestamp(stat("statistics.json").st_mtime)
         old = created == date.today()
 
@@ -40,18 +44,13 @@ def get_dataset(endpoint):
             data = retrieve_data(endpoint)
         except RequestException as e:
             wait = retries * 2
-            print("Error! Waiting %s secs and re-trying..." % wait)
+            logging.warning("Error! Waiting %s secs and re-trying..." % wait)
             time.sleep(wait)
             retries += 1
             if retries == 5:
                 raise e        
     data = read_file()["body"]
     return pd.DataFrame(data)
-
-    # Check whether file was created today
-
-
-
 
 
 if __name__ == "__main__":
