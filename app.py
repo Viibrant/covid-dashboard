@@ -13,9 +13,13 @@ dataset = plot_obj(endpoint)
 
 @app.route("/")
 def index():
-    fig = dataset.cases_graph()
-    plotly_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return render_template("index.html", plotly_json=plotly_json)
+    case_fig = dataset.cases_graph()
+    cases = json.dumps(case_fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    vaccine_fig = dataset.full_vaccines_graph()
+    vaccines = json.dumps(vaccine_fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template("index.html", cases=cases, vaccines=vaccines)
 
 
 if __name__ == "__main__":
