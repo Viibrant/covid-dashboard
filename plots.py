@@ -3,14 +3,13 @@ import plotly.express as px
 import pandas as pd
 
 
-class covid:
+class plot_obj:
     def __init__(self, endpoint):
         raw_data = get_dataset(endpoint)
+        
         self.statistics = raw_data
         self.statistics["date"] = pd.to_datetime(self.statistics["date"])
-        # self.statistics.sort_values("date", ascending=False)
-
-        # convert all dates to standard format
+        
         self.latest_date = self.statistics.iloc[0]["date"].strftime("%Y-%m-%d")
 
     def get_newcases_nationally(self):
