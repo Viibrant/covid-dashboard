@@ -1,8 +1,7 @@
 from datetime import date, datetime
 from requests import get
 from requests.exceptions import RequestException
-from os.path import isfile
-from os import stat
+import os
 import time
 import json
 import logging
@@ -11,7 +10,7 @@ from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
-path = "data/statistics.json"
+path = f"{os.getcwd()}/data/statistics.json"
 
 
 def retrieve_data(endpoint):
@@ -36,13 +35,13 @@ def read_file():
 
 
 def get_dataset(endpoint):
-    file_exists = isfile(path)
-    empty = not (file_exists and stat(path).st_size != 0)
+    file_exists = os.path.isfile(path)
+    empty = not (file_exists and os.stat(path).st_size != 0)
     retries = 1
 
     if file_exists:
         logging.info("Existing file detected")
-        created = datetime.fromtimestamp(stat(path).st_mtime)
+        created = datetime.fromtimestamp(os.stat(path).st_mtime)
         old = created == date.today()
 
     if not file_exists or empty or old:
