@@ -1,4 +1,4 @@
-from check_file import get_dataset
+from .check_file import get_dataset
 from dash import dcc
 import plotly.express as px
 import pandas as pd
