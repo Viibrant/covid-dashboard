@@ -1,10 +1,12 @@
 from plots import plot_obj
-from dash import html
+from dash import html, dcc
+import plotly.express as px
 import dash
 import json
 import plotly
 
 app = dash.Dash(__name__)
+application = app.server
 
 metrics = "&metric=".join(
     ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
@@ -12,19 +14,25 @@ metrics = "&metric=".join(
 endpoint = f"https://api.coronavirus.data.gov.uk/v2/data?areaType=utla&metric={metrics}&format=json"
 
 
-dataset = plot_obj(endpoint)
+stats = plot_obj(endpoint)
 
 app.layout = html.Div(
     children=[
         html.Div(
-            className="row",  # Define the row element
+            className="row",
             children=[
                 html.Div(
-                    className="four columns div-user-controls"
-                ),  # Define the left element
+                    className="four columns div-user-controls",
+                    children=[
+                        html.H2("NHS COVID-19 API"),
+                        html.P("Visualising COVID-19 statistics with Plotly - Dash"),
+                        html.P("(WORK IN PROGRESS)"),
+                    ],
+                ),
                 html.Div(
-                    className="eight columns div-for-charts bg-grey"
-                ),  # Define the right element
+                    className="eight columns div-for-charts bg-grey",
+                    children=[stats.cgraph(), stats.vgraph()],
+                ),
             ],
         )
     ]
