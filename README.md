@@ -1,5 +1,5 @@
 
-<h1 align="center"><a href="http">COVID-19 Web App </a></h1>
+<h1 align="center"><a href="connorData.Science/covid">COVID-19 Web App </a></h1>
 
 <p align="center"> A simple COVID-19 Dashboard
 </p>
