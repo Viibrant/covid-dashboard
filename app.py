@@ -41,4 +41,4 @@ app.layout = html.Div(
 if __name__ == "__main__":
     app.run_server()
 else:  # file is being imported
-    from server import app
+    from website import app
