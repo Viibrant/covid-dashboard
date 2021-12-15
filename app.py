@@ -1,7 +1,7 @@
 from flask import Flask
 from .plots import plot_obj
 from dash import html, dcc
-from server import app
+from website import app
 import plotly.express as px
 import dash
 
