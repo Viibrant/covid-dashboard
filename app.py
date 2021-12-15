@@ -7,6 +7,7 @@ import dash
 server = Flask(__name__)
 app = dash.Dash(name=__name__, server=server)
 
+
 metrics = "&metric=".join(
     ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
 )
