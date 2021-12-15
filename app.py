@@ -1,13 +1,11 @@
 from flask import Flask
 from .plots import plot_obj
 from dash import html, dcc
-from server import app
 import plotly.express as px
 import dash
 
 server = Flask(__name__)
-app = dash.Dash(name=__name__, server=server, requests_pathname_prefix="/covid/")
-# server = app.server
+app = dash.Dash(name=__name__, server=server)
 
 metrics = "&metric=".join(
     ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
