@@ -1,12 +1,11 @@
-from plots import plot_obj
+from flask import Flask
+from .plots import plot_obj
 from dash import html, dcc
 import plotly.express as px
 import dash
-import json
-import plotly
 
-app = dash.Dash(__name__)
-application = app.server
+server = Flask(__name__)
+app = dash.Dash(name=__name__, server=server, requests_pathname_prefix="/covid/")
 
 metrics = "&metric=".join(
     ["newCasesBySpecimenDate", "newPeopleVaccinatedCompleteByVaccinationDate"]
@@ -40,4 +39,6 @@ app.layout = html.Div(
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server()
+else:  # file is being imported
+    from website import app

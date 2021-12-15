@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
-path = f"{os.getcwd()}/data/statistics.json"
+path = os.path.join(os.path.dirname(__file__), "data/statistics.json")
 
 
 def retrieve_data(endpoint):

@@ -1,4 +1,4 @@
-from check_file import get_dataset
+from .check_file import get_dataset
 from dash import dcc
 import plotly.express as px
 import pandas as pd
@@ -6,6 +6,7 @@ import pandas as pd
 
 class plot_obj:
     # TODO! sort out *args for aggregate
+    # TODO! vaccinations graph: 1st, 2nd ---> subplot
     def __init__(self, endpoint):
         raw_data = get_dataset(endpoint)
 
